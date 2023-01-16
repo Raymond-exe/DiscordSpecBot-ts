@@ -1,7 +1,7 @@
+import { GameDetails } from "./gamedetails";
+
 // TODO: find a usable API lol
 // see: https://rapidapi.com/idirmosh/api/computer-components-api/
-
-import { GameDetails } from "./gamedetails";
 
 export class User {
     public readonly discordId: number;
@@ -32,7 +32,15 @@ export class User {
     }
 
     public canPlay(game: GameDetails): SpecsComparison {
-        return this.isBetterThan(game.requirements);
+        const rec = this.isBetterThan(game.requirements.recommended);
+        if (rec.overall) {
+            rec.notes = `Recommended specifications for ${game.name}`;
+            return rec;
+        } else {
+            const min = this.isBetterThan(game.requirements.minimum);
+            min.notes = `Minimum specifications for ${game.name}`;
+            return min;
+        }
     }
 }
 
@@ -43,6 +51,8 @@ export interface Specifications {
     readonly GPU: Hardware;
     readonly RAM: number;
     readonly diskSpace?: number; // not entered for Users, too invasive
+    readonly OS?: String; // same caveat as diskSpace
+    notes?: String;
 }
 
 export interface SpecsComparison {
@@ -50,6 +60,7 @@ export interface SpecsComparison {
     readonly GPU: number;
     readonly RAM: number;
     readonly overall: boolean;
+    notes?: String;
 }
 
 export interface Hardware {
