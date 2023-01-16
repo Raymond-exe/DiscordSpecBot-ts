@@ -1,10 +1,10 @@
 import fetch from 'node-fetch';
-import { GameDetails } from './gamedetails';
+import fuzzysort from 'fuzzysort';
 import { Specifications } from './hardware';
 
-const ALL_STEAMAPPS_URL = "http://api.steampowered.com/ISteamApps/GetAppList/v0002/";
-const DETAILS_URL = "http://store.steampowered.com/api/appdetails?appids=";
-const APP_URL = "https://store.steampowered.com/app/"
+const ALL_STEAMAPPS_URL = 'http://api.steampowered.com/ISteamApps/GetAppList/v0002/';
+const DETAILS_URL = 'http://store.steampowered.com/api/appdetails?appids=';
+const APP_URL = 'https://store.steampowered.com/app/';
 
 const STEAMAPPS_CACHE: SteamGame[] = [];
 
@@ -21,54 +21,55 @@ export class SteamGame {
     public async getSpecs(): Promise<void> /*Promise<{minimum: Specifications, recommended: Specifications}>*/ {
         const deets = await this.getDetails();
         if (deets) {
-                const rawRequirements = deets['pc_requirements'];
-                const requirements = {
-                    minimum: new Map<String, String>(),
-                    recommended: new Map<String, String>()
-                }
-
-                if (rawRequirements['minimum']) {
-                    let rawMin = rawRequirements['minimum'];
-                    rawMin = rawMin.replaceAll(/<br>/gm, ';').replaceAll(/<.*?>/gm, '').split(';');
-                    requirements.minimum.set('Store Page', `${this.getLink()}`);
-                    rawMin.forEach(field => {
-                        if (field.includes('Minimum') || !field.trim()) return;
-                        if (!field.includes(':')) {
-                            requirements.minimum.set(field, field);
-                        } else {
-                            field = field.split(':');
-                            requirements.minimum.set(field[0].trim(), field[1].trim());
-                        }
-                    });
-                }
-
-                if (rawRequirements['recommended']) {
-                    let rawRec = rawRequirements['recommended'];
-                    rawRec = rawRec.replaceAll(/<br>/gm, ';').replaceAll(/<.*?>/gm, '').split(';');
-                    requirements.recommended.set('Store Page', `${this.getLink()}`);
-                    rawRec.forEach(field => {
-                        if (field.includes('Recommended') || !field.trim()) return;
-                        if (!field.includes(':')) {
-                            requirements.recommended.set(field, field);
-                        } else {
-                            field = field.split(':');
-                            requirements.recommended.set(field[0].trim(), field[1].trim());
-                        }
-                    });
-                }
-
-                if (requirements.minimum.size === 0 && requirements.recommended.size === 0) {
-                    console.log(`Failed to fetch requirements. Raw: ${rawRequirements}`);
-                } else {
-                    console.log('Minimum Requirements:');
-                    console.log(requirements.minimum);
-                    console.log('Recommended Requirements:');
-                    console.log(requirements.recommended);
-                }
-
-            } else {
-                console.log(`${this.name} (${this.getLink()}) is hidden.`);
+            const rawRequirements = deets['pc_requirements'];
+            const requirements = {
+                minimum: new Map<String, String>(),
+                recommended: new Map<String, String>()
             }
+
+            if (rawRequirements['minimum']) {
+                let rawMin = rawRequirements['minimum'];
+                rawMin = rawMin.replaceAll(/<br>/gm, ';').replaceAll(/<.*?>/gm, '').split(';');
+                requirements.minimum.set('Store Page', `${this.getLink()}`);
+                rawMin.forEach(field => {
+                    if (field.includes('Minimum') || !field.trim()) return;
+                    if (!field.includes(':')) {
+                        requirements.minimum.set(field, field);
+                    } else {
+                        field = field.split(':');
+                        requirements.minimum.set(field[0].trim(), field[1].trim());
+                    }
+                });
+            }
+
+            if (rawRequirements['recommended']) {
+                let rawRec = rawRequirements['recommended'];
+                rawRec = rawRec.replaceAll(/<br>/gm, ';').replaceAll(/<.*?>/gm, '').split(';');
+                requirements.recommended.set('Store Page', `${this.getLink()}`);
+                rawRec.forEach(field => {
+                    if (field.includes('Recommended') || !field.trim()) return;
+                    if (!field.includes(':')) {
+                        requirements.recommended.set(field, field);
+                    } else {
+                        field = field.split(':');
+                        requirements.recommended.set(field[0].trim(), field[1].trim());
+                    }
+                });
+            }
+
+            if (requirements.minimum.size === 0 && requirements.recommended.size === 0) {
+                console.log(`Failed to fetch requirements. Raw: ${JSON.stringify(deets)}`);
+                console.log(`Steam app: ${this.getLink()}`);
+            } else {
+                console.log('Minimum Requirements:');
+                console.log(requirements.minimum);
+                console.log('Recommended Requirements:');
+                console.log(requirements.recommended);
+            }
+
+        } else {
+            console.log(`${this.name} (${this.getLink()}) is hidden.`);
+        }
     }
 
     public getLink(): String {
@@ -98,14 +99,27 @@ export async function updateSteamAppsCache() {
     });
 }
 
+export function searchSteamApps(query: string, querySize: number = 10): SteamGame[] {
+    const results = fuzzysort.go(query, STEAMAPPS_CACHE, { key: 'name' });
+    const parsedResults = [];
+
+    for (let i = 0; i < querySize; i++) {
+        parsedResults.push(results[i].obj);
+    }
+
+    return parsedResults;
+}
+
 async function getJSON(URL: String) {
     return await (await fetch(`${URL}`)).json();
 }
 
+// Just a temporary testing function
 function randomGame(): SteamGame {
     return STEAMAPPS_CACHE[Math.floor(STEAMAPPS_CACHE.length*Math.random())];
 }
 
 updateSteamAppsCache().then(() => {
-    randomGame().getSpecs();
+    let game = searchSteamApps('Star Wars')[0];
+    console.log(game.getLink());
 });
