@@ -31,9 +31,7 @@ export class Command {
     }
 
     public match(phrase: string): boolean {
-        const caps = this.caseSensitive;
-
-        phrase = caps ? phrase : phrase.toLowerCase();
+        phrase = this.caseSensitive ? phrase : phrase.toLowerCase();
 
         if(phrase === this.name) {
             return true;

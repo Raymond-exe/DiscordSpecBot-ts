@@ -16,6 +16,6 @@ client.on('ready', () => {
 
 client.on('messageCreate', (message) => {
     console.log(`Message received! Type: ${typeof message}\nContents: ${message.content}`);
-})
+});
 
 client.login(process.env.TOKEN);
