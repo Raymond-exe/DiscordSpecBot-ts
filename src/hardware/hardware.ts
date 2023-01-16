@@ -1,4 +1,5 @@
-import { GameDetails } from "./gamedetails";
+import { GameDetails } from "../gamedetails";
+import { compare } from "./utils";
 
 // TODO: find a usable API lol
 // see: https://rapidapi.com/idirmosh/api/computer-components-api/
@@ -52,6 +53,7 @@ export interface Specifications {
     readonly RAM: number;
     readonly diskSpace?: number; // not entered for Users, too invasive
     readonly OS?: String; // same caveat as diskSpace
+    readonly directX?: 9 | 10 | 11 | 12; // who cares about 12 ultimate
     notes?: String;
 }
 
@@ -68,12 +70,4 @@ export interface Hardware {
     readonly brand: String; // stuff like NVidia, Intel, AMD, etc
     readonly score: number; // used for ranking hardware
     readonly type: "CPU" | "GPU";
-}
-
-function compare(h1: Hardware, h2: Hardware): number {
-    if (h1.type !== h2.type) {
-        throw Error(`Cannot compare ${h1.name} to ${h2.name}! (${h1.type} vs ${h2.type})`);
-    }
-    const diff = h1.score - h2.score;
-    return diff / Math.abs(diff);
 }

@@ -1,6 +1,6 @@
 import fetch from 'node-fetch';
 import fuzzysort from 'fuzzysort';
-import { Specifications } from './hardware';
+import { Specifications } from './hardware/hardware';
 
 const ALL_STEAMAPPS_URL = 'http://api.steampowered.com/ISteamApps/GetAppList/v0002/';
 const DETAILS_URL = 'http://store.steampowered.com/api/appdetails?appids=';
@@ -85,7 +85,6 @@ export class SteamGame {
         }
     }
 }
-
 export async function updateSteamAppsCache() {
     const response = await getJSON(ALL_STEAMAPPS_URL);
     const apps = response['applist']['apps'];
