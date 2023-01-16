@@ -1,4 +1,4 @@
-import { Client, Intents } from 'discord.js';
+import { Client, Intents, Message } from 'discord.js';
 import dotenv from 'dotenv';
 
 dotenv.config();
@@ -11,12 +11,10 @@ const client = new Client({
     ]
 });
 
-client.on('ready', () => {
-    console.log('---------------\nBot is ready.\n---------------\n');
-});
+client.login(process.env.DISCORD_TOKEN);
+client.on('ready', () => console.log('---------------\n|Bot is ready.|\n---------------\n') );
 
-client.on('messageCreate', (message) => {
-    console.log(`Message received! ${message.content}`);
-});
-
-client.login(process.env.TOKEN);
+client.on('messageCreate', handleMessage);
+function handleMessage(message: Message) {
+    // TODO this lol
+}
