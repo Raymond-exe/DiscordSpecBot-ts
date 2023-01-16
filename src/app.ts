@@ -6,16 +6,17 @@ dotenv.config();
 const client = new Client({
     intents: [ 
         Intents.FLAGS.GUILDS,
-        Intents.FLAGS.GUILD_MESSAGES
+        Intents.FLAGS.GUILD_MESSAGES,
+        Intents.FLAGS.MESSAGE_CONTENT
     ]
 });
 
 client.on('ready', () => {
-    console.log('Bot is ready.');
+    console.log('---------------\nBot is ready.\n---------------\n');
 });
 
 client.on('messageCreate', (message) => {
-    console.log(`Message received! Type: ${typeof message}\nContents: ${message.content}`);
+    console.log(`Message received! ${message.content}`);
 });
 
 client.login(process.env.TOKEN);
