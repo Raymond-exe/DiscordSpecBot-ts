@@ -6,5 +6,8 @@ export interface GameDetails {
     readonly link: String;
     readonly container?: any;
 
-    requirements: Specifications;
+    requirements: {
+        minimum: Specifications,
+        recommended: Specifications
+    };
 }
