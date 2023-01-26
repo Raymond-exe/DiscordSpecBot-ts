@@ -1,6 +1,8 @@
 import fetch from 'node-fetch';
 import fuzzysort from 'fuzzysort';
-import { Specifications } from './hardware/hardware';
+import { GameDetails } from './gamedetails';
+import { Specifications } from '../hardware/hardware';
+import { Parse } from '../hardware/utils';
 
 const ALL_STEAMAPPS_URL = 'http://api.steampowered.com/ISteamApps/GetAppList/v0002/';
 const DETAILS_URL = 'http://store.steampowered.com/api/appdetails?appids=';
@@ -18,7 +20,19 @@ export class SteamGame {
         this.name = name;
     }
 
-    public async getSpecs(): Promise<void> /*Promise<{minimum: Specifications, recommended: Specifications}>*/ {
+    public async gameDetails(): Promise<GameDetails> {
+        return {
+            name: this.name,
+            market: 'Steam',
+            link: this.getLink(),
+            container: this,
+
+            // TODO this below
+            requirements: await this.getSpecs()
+        };
+    }
+
+    public async getSpecs(): Promise<{minimum: Specifications, recommended: Specifications}> {
         const deets = await this.getDetails();
         if (deets) {
             const rawRequirements = deets['pc_requirements'];
@@ -58,17 +72,15 @@ export class SteamGame {
             }
 
             if (requirements.minimum.size === 0 && requirements.recommended.size === 0) {
-                console.log(`Failed to fetch requirements. Raw: ${JSON.stringify(deets)}`);
-                console.log(`Steam app: ${this.getLink()}`);
-            } else {
-                console.log('Minimum Requirements:');
-                console.log(requirements.minimum);
-                console.log('Recommended Requirements:');
-                console.log(requirements.recommended);
+                throw new Error(`Failed to fetch requirements. Steam app: ${this.getLink()}`);
             }
 
+            return {
+                minimum: await mapToSpecs(requirements.minimum),
+                recommended: await mapToSpecs(requirements.recommended)
+            };
         } else {
-            console.log(`${this.name} (${this.getLink()}) is hidden.`);
+            throw Error(`${this.name} (${this.getLink()}) is hidden.`);
         }
     }
 
@@ -85,6 +97,34 @@ export class SteamGame {
         }
     }
 }
+
+async function mapToSpecs(map: Map<String, String>): Promise<Specifications> {
+    const cpu = getOrDefault('Processor');
+    const gpu = getOrDefault('Graphics');
+    const ram = getOrDefault('Memory');
+    const os = getOrDefault('OS');
+    const dx = Parse.directx(getOrDefault('DirectX'));
+    const disk = getOrDefault('Storage');
+    const notes = getOrDefault('Additional Notes');
+
+    const specs: Specifications = {
+        CPU: cpu ? await Parse.cpu(cpu) : null,
+        GPU: gpu ? await Parse.gpu(gpu) : null,
+        RAM: ram ? Parse.ram(ram) : 0,
+    }
+    if (os) specs.OS = os;
+    if (dx) specs.directX = dx;
+    if (disk && Number(disk)) specs.diskSpace = Number(disk);
+    if (notes) specs.notes = notes;
+
+    return specs;
+
+    function getOrDefault(key: String) {
+        return (map.has(key) ? map.get(key) : false)
+    }
+}
+
+
 export async function updateSteamAppsCache() {
     const response = await getJSON(ALL_STEAMAPPS_URL);
     const apps = response['applist']['apps'];
@@ -119,6 +159,7 @@ function randomGame(): SteamGame {
 }
 
 updateSteamAppsCache().then(() => {
-    let game = searchSteamApps('Star Wars')[0];
+    let game = randomGame();
     console.log(game.getLink());
+    game.getSpecs().then(specs => console.log(specs));
 });
