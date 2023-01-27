@@ -5,16 +5,15 @@ export class Command {
     public aliases: string[];
     public action: Function;
     
-    constructor(name: string, aliases: string[] = [], caseSensitive: boolean = false) {
+    constructor(name: string, aliases: string[] = [], caseSensitive: boolean = false, callback = Command.defaultCallback ) {
         this.name = caseSensitive ? name : name.toLowerCase();
         this.aliases = caseSensitive ? aliases : toLowerCase(aliases);
         this.caseSensitive = caseSensitive;
+        this.action = callback;
 
         function toLowerCase(strs: string[]): string[] {
             let out = [];
-            strs.forEach(str => {
-                out.push(str.toLowerCase());
-            })
+            strs.forEach( str => out.push(str.toLowerCase()) );
 
             return out;
         }
@@ -32,13 +31,28 @@ export class Command {
 
     public match(phrase: string): boolean {
         phrase = this.caseSensitive ? phrase : phrase.toLowerCase();
+        return phrase === this.name || this.aliases.includes(phrase);
+    }
 
-        if(phrase === this.name) {
-            return true;
-        } else if (this.aliases.includes(phrase)) {
-            return true;
-        }
-
-        return false;
+    private static defaultCallback(): void {
+        console.log(`${this.name} was called! (This default callback was auto-assigned.)`);
     }
 }
+
+const helpCmd = new Command('help', ['cmd', 'cmds', 'commands', 'actions'], false);
+const searchCmd = new Command('search');
+
+
+helpCmd.setAction((event) => {
+
+});
+
+searchCmd.setAction((event) => {
+
+});
+
+
+export const ALL_COMMANDS = [
+    helpCmd,
+    searchCmd,
+];
