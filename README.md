@@ -6,7 +6,6 @@ really though, the intent of this bot is to help users determine if their PC can
 
 - [Steam Web API](https://steamwebapi.azurewebsites.net).
 - [Farzher's](https://github.com/farzher) [Fuzzysort](https://github.com/farzher/fuzzysort) node package.
-- Considering using [darthbatman's](https://github.com/darthbatman) unofficial [PC Part Picker API](https://github.com/darthbatman/pcpartpicker), if it works.
 - And of course, [discord.js](https://discord.js.org).
 
 *Storage of PC specs (and possibly outlying popular games not on the steam market?) will be on a private [Google Firestore NoSQL Database](https://firebase.google.com/docs/firestore)*
