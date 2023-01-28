@@ -16,5 +16,7 @@ client.on('ready', () => console.log('---------------\n|Bot is ready.|\n--------
 
 client.on('messageCreate', handleMessage);
 function handleMessage(message: Message) {
-    // TODO this lol
+    if (message.content.split(' ')[0].startsWith(client.user.discriminator)) {
+        // TODO do the cool thing!
+    }
 }
