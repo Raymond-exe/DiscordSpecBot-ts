@@ -14,7 +14,7 @@ export class SteamGame {
     public readonly appid: Number;
     public readonly name: String;
     private fetchedData: any;
-    
+
     constructor (id: number, name: String) {
         this.appid = id;
         this.name = name;

@@ -1,4 +1,7 @@
 import { SlashCommandBuilder } from '@discordjs/builders';
+import { searchSteamApps } from '../games/steam';
+
+const QUERY_COUNT = 10;
 
 export const searchCmd = {
     data: new SlashCommandBuilder()
@@ -16,6 +19,7 @@ export const searchCmd = {
         .setRequired(true)
     ),
     execute: async (interaction) => {
-        await interaction.reply(':ping_pong: Pong!')
+        const results = searchSteamApps(interaction.content, QUERY_COUNT);
+        await interaction.reply(JSON.stringify(results));
     }
 }
