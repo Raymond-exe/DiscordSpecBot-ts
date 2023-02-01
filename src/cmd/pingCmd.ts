@@ -1,6 +1,6 @@
 import { SlashCommandBuilder } from '@discordjs/builders';
 
-export const pingCmd = {
+module.exports = {
     data: new SlashCommandBuilder()
     .setName('ping')
     .setDescription(':ping_pong: Ping-pong!'),

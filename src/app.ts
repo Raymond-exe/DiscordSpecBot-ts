@@ -1,4 +1,4 @@
-import { Client, Intents, Message } from 'discord.js';
+import { Client, Collection, Intents, Message } from 'discord.js';
 import dotenv from 'dotenv';
 
 dotenv.config();
@@ -11,6 +11,10 @@ const client = new Client({
     ]
 });
 
+// load commands
+// client.commands = new Collection();
+
+// login client
 client.login(process.env.DISCORD_TOKEN);
 client.on('ready', () => console.log('---------------\n|Bot is ready.|\n---------------\n') );
 

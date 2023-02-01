@@ -3,7 +3,7 @@ import { searchSteamApps } from '../games/steam';
 
 const QUERY_COUNT = 10;
 
-export const searchCmd = {
+module.exports = {
     data: new SlashCommandBuilder()
     .setName('search')
     .setDescription('Search for a CPU, GPU, or a game on Steam.')
