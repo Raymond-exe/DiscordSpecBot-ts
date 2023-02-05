@@ -1,10 +1,16 @@
 import { SlashCommandBuilder } from '@discordjs/builders';
+import { Parse } from '../hardware/utils';
 
 export const setCpuCmd = {
     data: new SlashCommandBuilder().setName('setcpu')
     .setDescription('Assigns the CPU for your PC build.')
     .addStringOption(option => option.setName('CPU Name').setRequired(true)),
     execute: async (interaction) => {
+        const name = ""; // TODO get CPU Name option
+        const CPU = await Parse.cpu(name);
+
+        // TODO assign CPU to user's build
+
         await interaction.reply('CPU');
     }
 }
