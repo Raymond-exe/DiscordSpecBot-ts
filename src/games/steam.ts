@@ -124,8 +124,8 @@ async function mapToSpecs(map: Map<String, String>): Promise<Specifications> {
     }
 }
 
-
-export async function updateSteamAppsCache() {
+updateSteamAppsCache();
+async function updateSteamAppsCache() {
     const response = await getJSON(ALL_STEAMAPPS_URL);
     const apps = response['applist']['apps'];
 
@@ -158,8 +158,12 @@ function randomGame(): SteamGame {
     return STEAMAPPS_CACHE[Math.floor(STEAMAPPS_CACHE.length*Math.random())];
 }
 
-updateSteamAppsCache().then(() => {
-    let game = randomGame();
-    console.log(game.getLink());
-    game.getSpecs().then(specs => console.log(specs));
-});
+
+function test() {
+    updateSteamAppsCache().then(() => {
+        let game = randomGame();
+        console.log(game.getLink());
+        game.getSpecs().then(specs => console.log(specs));
+    });
+}
+// test();
