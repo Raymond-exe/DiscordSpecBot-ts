@@ -18,7 +18,7 @@ module.exports = {
         .setRequired(true)
     )
     .addStringOption(option =>
-        option.setName('search query')
+        option.setName('query')
         .setDescription('The name of hardware or game to search for.')
         .setRequired(true)
     ),
