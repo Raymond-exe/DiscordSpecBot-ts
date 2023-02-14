@@ -1,23 +1,24 @@
 import * as fs from 'fs';
 
+const IGNORE_INVALID_COMMANDS = true;
+
 export function loadCommands() {
     const cmds = {};
     const commandFiles = fs.readdirSync('./src/cmd/').filter(file => file.endsWith('Cmd.ts'));
 
     for (const file of commandFiles) try {
-        console.log(`Loading ${file}...`);
         const command = require(`./${file}`);
-        if ('data' in command && 'execute' in command) {
-            cmds[command.data.name] = command.execute;
-            console.log(`Successfully loaded ${file}`);
-        } else {
-            console.log(`[WARNING] The command at ${file} is missing a required "data" or "execute" property.`);
-        }
+
+        cmds[command.data.name] = command.execute;
+        console.log(`Loaded ${file}`);
+
     } catch (e) {
-        console.log(`Failed to initialize ${file}, skipping...`);
+        console.log(`Failed to load ${file}!`);
+        if (!IGNORE_INVALID_COMMANDS) throw e;
     }
 
-    console.log(JSON.stringify(cmds));
+    let keys = Object.keys(cmds);
+    console.log(`Finished loading ${keys.length} commands: (${keys.join(', ')})`);
 
     return cmds;
 }
