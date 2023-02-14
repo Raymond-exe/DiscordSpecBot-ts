@@ -118,5 +118,3 @@ async function search(type: 'CPU' | 'GPU', query: String): Promise<Hardware[]> {
         return occurrences;
     }
 }
-
-Parse.gpu('amd').then(item => console.log(item));
