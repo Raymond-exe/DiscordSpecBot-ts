@@ -18,9 +18,7 @@ export function loadCommands() {
     }
 
     let keys = Object.keys(cmds);
-    console.log(`Finished loading ${keys.length} commands: (${keys.join(', ')})`);
+    console.log(`Finished loading ${keys.length} commands. (${keys.join(', ')})`);
 
     return cmds;
 }
-
-loadCommands();
