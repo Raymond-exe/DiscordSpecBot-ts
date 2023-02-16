@@ -1,4 +1,4 @@
-import { Hardware, Specifications } from "./hardware/hardware";
+import { Hardware, Specifications } from "../hardware/hardware";
 
 export interface GameDetails {
     readonly name: String;
