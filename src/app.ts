@@ -1,5 +1,5 @@
 import { Client, Intents, Message } from 'discord.js';
-import { loadCommands } from './cmd/command';
+import { DiscordCommand, loadCommands, registerCommands } from './cmd/command';
 import dotenv from 'dotenv';
 
 dotenv.config();
@@ -18,18 +18,19 @@ const client = new Client({
 
 // login client
 client.login(process.env.DISCORD_TOKEN);
-client.on('ready', () => console.log('---------------\n|Bot is ready.|\n---------------\n') );
+client.on('ready', () => console.log('\n-----------------\n| Bot is ready. |\n-----------------\n') );
 
 
-// load commands
-const commands = loadCommands();
+// load & register commands
+const commands: DiscordCommand[] = loadCommands();
+registerCommands(commands, { TOKEN: process.env.DISCORD_TOKEN, CLIENT_ID: process.env.DISCORD_CLIENT_ID });
 
 
 // interaction (command) handler
 client.on('interactionCreate', async interaction => {
     if (!interaction.isCommand()) return;
 
-	const command = commands[interaction.commandName];
+	const command = getCommand(interaction.commandName);
 
 	if (!command) {
 		console.error(`No command matching ${interaction.commandName} was found.`);
@@ -43,6 +44,15 @@ client.on('interactionCreate', async interaction => {
 	}
 
 });
+
+function getCommand(name) {
+    for (const cmd of commands) {
+        if (cmd.data.name === name) {
+            return cmd;
+        }
+    }
+    return null;
+}
 
 
 // message handler, checks if user messages start with a ping for this bot
