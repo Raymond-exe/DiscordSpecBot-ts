@@ -1,11 +1,10 @@
 import { SlashCommandBuilder } from '@discordjs/builders';
 import { Message } from 'discord.js';
-import { searchSteamApps, SteamGame } from '../games/steam';
+import { searchSteamApps } from '../games/steam';
+import { getMessageParameters } from './command';
 
 const QUERY_COUNT = 25;
 const RESULTS_PER_PAGE = 5;
-
-const SEARCH_CACHE: Map<String, SteamGame[]> = new Map();
 
 module.exports = {
     data: new SlashCommandBuilder()
@@ -23,13 +22,25 @@ module.exports = {
         .setRequired(true)
     ),
     execute: async (interaction: Message) => {
-        const query: string = interaction.content;
+        const parameters = getMessageParameters(interaction);
 
-        if (!SEARCH_CACHE.has(query.toLowerCase())) {
-            SEARCH_CACHE.set(query.toLowerCase(), searchSteamApps(query, QUERY_COUNT));
+        switch (parameters['type']) {
+            case 'CPU':
+                // TODO this
+                break;
+            case 'GPU':
+                // TODO this
+                break;
+            case 'Steam':
+                const results = searchSteamApps(parameters['query']);
+                const games = [];
+                for (let i of results) {
+                    console.log(i);
+                    games.push(i.name);
+                }
+                // TODO refine
+                interaction.reply(JSON.stringify(games));
+                break;
         }
-        const results = SEARCH_CACHE.get(query);
-
-        await interaction.reply(JSON.stringify(results));
     }
 }

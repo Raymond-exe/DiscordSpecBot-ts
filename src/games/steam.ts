@@ -9,6 +9,7 @@ const DETAILS_URL = 'http://store.steampowered.com/api/appdetails?appids=';
 const APP_URL = 'https://store.steampowered.com/app/';
 
 const STEAMAPPS_CACHE: SteamGame[] = [];
+const SEARCH_CACHE: Map<String, SteamGame[]> = new Map();
 
 export class SteamGame {
     public readonly appid: Number;
@@ -139,14 +140,18 @@ async function updateSteamAppsCache() {
 }
 
 export function searchSteamApps(query: string, querySize: number = 10): SteamGame[] {
-    const results = fuzzysort.go(query, STEAMAPPS_CACHE, { key: 'name' });
-    const parsedResults = [];
+    if (!SEARCH_CACHE.has(query.toLowerCase())) {
+        const results = fuzzysort.go(query, STEAMAPPS_CACHE, { key: 'name' });
+        const parsedResults = [];
 
-    for (let i = 0; i < querySize; i++) {
-        parsedResults.push(results[i].obj);
+        for (let i = 0; i < querySize; i++) {
+            parsedResults.push(results[i].obj);
+        }
+
+        SEARCH_CACHE.set(query.toLowerCase(), parsedResults);
     }
+    return SEARCH_CACHE.get(query.toLowerCase());
 
-    return parsedResults;
 }
 
 async function getJSON(URL: String) {
