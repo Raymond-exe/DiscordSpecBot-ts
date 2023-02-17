@@ -19,7 +19,7 @@ module.exports = {
     )
     .addStringOption(option =>
         option.setName('query')
-        .setDescription('The name of hardware or game to search for.')
+        .setDescription('The hardware or game to search for.')
         .setRequired(true)
     ),
     execute: async (interaction: Message) => {

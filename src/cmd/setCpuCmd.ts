@@ -4,10 +4,10 @@ import { Parse } from '../hardware/utils';
 
 module.exports = {
     data: new SlashCommandBuilder().setName('setcpu')
-    .setDescription('Assigns the CPU for your PC build.')
+    .setDescription('Assigns the central processor for your PC build.')
     .addStringOption(option =>
         option.setName('cpu')
-        .setDescription('Name of the CPU')
+        .setDescription('Name of your CPU')
         .setRequired(true)),
     execute: async (interaction: Message) => {
         const name = ""; // TODO get CPU Name option

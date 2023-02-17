@@ -4,10 +4,10 @@ import { Parse } from '../hardware/utils';
 
 module.exports = {
     data: new SlashCommandBuilder().setName('setgpu')
-    .setDescription('Assigns the GPU for your PC build.')
+    .setDescription('Assigns the graphics card for your PC build.')
     .addStringOption(option =>
         option.setName('gpu')
-        .setDescription('Name of the GPU')
+        .setDescription('Name of your GPU')
         .setRequired(true)),
     execute: async (interaction: Message) => {
         const name = ""; // TODO get GPU Name option
