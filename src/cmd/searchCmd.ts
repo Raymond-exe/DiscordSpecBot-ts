@@ -1,6 +1,7 @@
 import { SlashCommandBuilder } from '@discordjs/builders';
 import { Message } from 'discord.js';
 import { searchSteamApps } from '../games/steam';
+import { searchHardware } from '../hardware/utils';
 import { getMessageParameters } from './command';
 
 const QUERY_COUNT = 25;
@@ -23,22 +24,25 @@ module.exports = {
     ),
     execute: async (interaction: Message) => {
         const parameters = getMessageParameters(interaction);
+        let results;
 
+        // TODO refine
         switch (parameters['type']) {
             case 'CPU':
-                // TODO this
+                results = await searchHardware('CPU', parameters['query']);
+                interaction.reply(JSON.stringify(results));
                 break;
             case 'GPU':
-                // TODO this
+                results = await searchHardware('GPU', parameters['query']);
+                interaction.reply(JSON.stringify(results));
                 break;
             case 'Steam':
-                const results = searchSteamApps(parameters['query']);
+                results = searchSteamApps(parameters['query']);
                 const games = [];
                 for (let i of results) {
                     console.log(i);
                     games.push(i.name);
                 }
-                // TODO refine
                 interaction.reply(JSON.stringify(games));
                 break;
         }
