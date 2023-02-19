@@ -17,7 +17,7 @@ export function compare(h1: Hardware, h2: Hardware): number {
 
 export class Parse {
     public static async cpu(raw: String): Promise<Hardware> {
-        const result = (await search('CPU', raw)[0]);
+        const result = (await searchHardware('CPU', raw)[0]);
         return new Promise(resolve => {
             console.log(`Result: ${result}`);
             while (!result) {}
@@ -26,7 +26,7 @@ export class Parse {
     }
 
     public static async gpu(raw: String): Promise<Hardware> {
-        const result = (await search('GPU', raw)[0]);
+        const result = (await searchHardware('GPU', raw)[0]);
         return new Promise(resolve => {
             console.log(`Result: ${result}`);
             resolve(result);
@@ -49,7 +49,7 @@ function isEmpty(specs: Specifications): boolean {
     return !specs.CPU && !specs.GPU && !specs.RAM && !specs.OS && !specs.directX;
 }
 
-async function search(type: 'CPU' | 'GPU', query: String): Promise<Hardware[]> {
+export async function searchHardware(type: 'CPU' | 'GPU', query: String, querySize: number = 10): Promise<Hardware[]> {
     const url = SEARCH_URL[type];
     query = query.replaceAll(' ', '%20');
 
@@ -57,8 +57,6 @@ async function search(type: 'CPU' | 'GPU', query: String): Promise<Hardware[]> {
 
     const results = HtmlTableToJson.parse(rawHtml).results[0];
     const hardwareOutput: Hardware[] = [];
-
-    if (results) console.log(results[0]);
 
     switch (type) {
         case 'CPU':
@@ -80,6 +78,10 @@ async function search(type: 'CPU' | 'GPU', query: String): Promise<Hardware[]> {
                         }
                     }
                 });
+
+                if (hardwareOutput.length >= querySize) {
+                    break;
+                }
             }
 
             break;
@@ -99,12 +101,16 @@ async function search(type: 'CPU' | 'GPU', query: String): Promise<Hardware[]> {
                         }
                     }
                 });
+
+                if (hardwareOutput.length >= querySize) {
+                    break;
+                }
             }
 
             break;
     }
 
-    return hardwareOutput;
+    return hardwareOutput.reverse();
 
     function getAllVendors(flag: string = 'vendor-'): String[] {
         let html = rawHtml;
