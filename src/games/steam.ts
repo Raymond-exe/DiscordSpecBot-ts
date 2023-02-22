@@ -7,10 +7,11 @@ import { Parse } from '../hardware/utils';
 const ALL_STEAMAPPS_URL = 'http://api.steampowered.com/ISteamApps/GetAppList/v0002/';
 const DETAILS_URL = 'http://store.steampowered.com/api/appdetails?appids=';
 const APP_URL = 'https://store.steampowered.com/app/';
-const FILTER_URL = 'https://store.steampowered.com/search/suggest?term={QUERY}&f=games&cc=US&l=english&excluded_content_descriptors%5B%5D=1&use_store_query=1&use_search_spellcheck=1'
+const FILTER_URL = 'https://store.steampowered.com/search/suggest?term={QUERY}&f=games&cc=US&l=english&excluded_content_descriptors%5B%5D=1&use_store_query=1&use_search_spellcheck=1';
 
 const STEAMAPPS_CACHE: SteamGame[] = [];
 const SEARCH_CACHE: Map<String, SteamGame[]> = new Map();
+const THUMBNAIL_CACHE: Map<string, string> = new Map();
 
 export class SteamGame {
     public readonly appid: Number;
@@ -144,22 +145,37 @@ export async function searchSteamApps(query: string, querySize: number = 10): Pr
     if (!SEARCH_CACHE.has(query.toLowerCase())) {
         const results = fuzzysort.go(query, STEAMAPPS_CACHE, { key: 'name' });
         const parsedResults = [];
-        const filter = getFilter();
+        const filter = await getFilter(query);
 
-        for (let i = 0; i < querySize; i++) {
-            if ((await filter).includes(`${results[i].obj.appid}`))
+        for (let i = 0; i < querySize && i < results.length; i++) {
+            if (filter.includes(`${results[i].obj.appid}`))
                 parsedResults.push(results[i].obj);
             else
                 querySize++;
         }
 
         SEARCH_CACHE.set(query.toLowerCase(), parsedResults);
+
+        // extract thumbnail image for top result
+        const imgIndex = filter.indexOf('img src="') + 9;
+        const thumbnailUrl = filter.substring(imgIndex, filter.indexOf('"', imgIndex));
+        THUMBNAIL_CACHE.set(query, thumbnailUrl);
     }
     return SEARCH_CACHE.get(query.toLowerCase());
+}
 
-    async function getFilter() {
-        return await (await fetch(FILTER_URL.replace('{QUERY}', query.replaceAll(' ', '+')))).text();
+export async function getSteamThumbnailURL(query: string): Promise<string> {
+    if (!THUMBNAIL_CACHE.has(query)) {
+        const filter = await getFilter(query);
+        const imgIndex = filter.indexOf('img src="') + 9;
+        const thumbnailUrl = filter.substring(imgIndex, filter.indexOf('"', imgIndex));
+        THUMBNAIL_CACHE.set(query, thumbnailUrl);
     }
+    return THUMBNAIL_CACHE.get(query);
+}
+
+async function getFilter(query: string) {
+    return await (await fetch(FILTER_URL.replace('{QUERY}', query.replaceAll(' ', '+')))).text();
 }
 
 async function getJSON(URL: String) {
