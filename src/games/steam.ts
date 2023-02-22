@@ -7,16 +7,17 @@ import { Parse } from '../hardware/utils';
 const ALL_STEAMAPPS_URL = 'http://api.steampowered.com/ISteamApps/GetAppList/v0002/';
 const DETAILS_URL = 'http://store.steampowered.com/api/appdetails?appids=';
 const APP_URL = 'https://store.steampowered.com/app/';
+const FILTER_URL = 'https://store.steampowered.com/search/suggest?term={QUERY}&f=games&cc=US&l=english&excluded_content_descriptors%5B%5D=1&use_store_query=1&use_search_spellcheck=1'
 
 const STEAMAPPS_CACHE: SteamGame[] = [];
 const SEARCH_CACHE: Map<String, SteamGame[]> = new Map();
 
 export class SteamGame {
     public readonly appid: Number;
-    public readonly name: String;
+    public readonly name: string;
     private fetchedData: any;
 
-    constructor (id: number, name: String) {
+    constructor (id: number, name: string) {
         this.appid = id;
         this.name = name;
     }
@@ -139,19 +140,26 @@ async function updateSteamAppsCache() {
     });
 }
 
-export function searchSteamApps(query: string, querySize: number = 10): SteamGame[] {
+export async function searchSteamApps(query: string, querySize: number = 10): Promise<SteamGame[]> {
     if (!SEARCH_CACHE.has(query.toLowerCase())) {
         const results = fuzzysort.go(query, STEAMAPPS_CACHE, { key: 'name' });
         const parsedResults = [];
+        const filter = getFilter();
 
         for (let i = 0; i < querySize; i++) {
-            parsedResults.push(results[i].obj);
+            if ((await filter).includes(`${results[i].obj.appid}`))
+                parsedResults.push(results[i].obj);
+            else
+                querySize++;
         }
 
         SEARCH_CACHE.set(query.toLowerCase(), parsedResults);
     }
     return SEARCH_CACHE.get(query.toLowerCase());
 
+    async function getFilter() {
+        return await (await fetch(FILTER_URL.replace('{QUERY}', query.replaceAll(' ', '+')))).text();
+    }
 }
 
 async function getJSON(URL: String) {
@@ -166,9 +174,7 @@ function randomGame(): SteamGame {
 
 function test() {
     updateSteamAppsCache().then(() => {
-        let game = randomGame();
-        console.log(game.getLink());
-        game.getSpecs().then(specs => console.log(specs));
+        let game = searchSteamApps('Halo: Wars');
     });
 }
-// test();
+test();
