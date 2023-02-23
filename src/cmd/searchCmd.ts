@@ -1,6 +1,6 @@
 import { SlashCommandBuilder } from '@discordjs/builders';
 import { Message, MessageEmbed } from 'discord.js';
-import { searchSteamApps, SteamGame } from '../games/steam';
+import { getSteamThumbnailURL, searchSteamApps, SteamGame } from '../games/steam';
 import { searchHardware } from '../hardware/utils';
 import { getMessageParameters } from './command';
 import { Hardware } from '../hardware/hardware';
@@ -14,7 +14,7 @@ module.exports = {
     .setDescription('Search for a CPU, GPU, or a game on Steam.')
     .addStringOption(option =>
         option.setName('type')
-        .setDescription('("CPU"/"GPU"/"Game")')
+        .setDescription('("CPU"/"GPU"/"Steam")')
         .setChoices({ name: 'CPU', value: 'CPU' }, { name: 'GPU', value: 'GPU' }, { name: 'Steam', value: 'Steam' })
         .setRequired(true)
     )
@@ -39,13 +39,20 @@ module.exports = {
                 interaction.reply(JSON.stringify(results));
                 break;
             case 'Steam':
-                results = searchSteamApps(query);
-                const games = [];
-                results.forEach( (i: SteamGame) => games.push(i.name) );
+                results = await searchSteamApps(query);
+                const embedFields: { name: string, value: string, inline?: boolean }[] = [];
+                results.forEach( (i: SteamGame) => {
+                    embedFields.push({name: `(${i.name})[${i.getLink()}]`, value: ' '});
+                });
 
-                // TODO make embed
+                const steamEmbed = new MessageEmbed()
+                    .setTitle(`Search results for *${query}*...`)
+                    .setURL(`https://store.steampowered.com/search/?term=${query.replaceAll(' ', '+')}`)
+                    .setThumbnail(await getSteamThumbnailURL(query))
+                    .setColor('#FFFFFF')
+                    .addFields(embedFields);
 
-                // interaction.reply(JSON.stringify(games));
+                interaction.reply({embeds: [steamEmbed]});
                 break;
         }
     }
