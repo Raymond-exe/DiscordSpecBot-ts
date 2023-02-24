@@ -8,6 +8,12 @@ import { Hardware } from '../hardware/hardware';
 const QUERY_COUNT = 25;
 const RESULTS_PER_PAGE = 5;
 
+const AUTHORS = {
+    steam: {name: 'Results via Steam', url: 'https://store.steampowered.com', iconURL: 'https://media.discordapp.net/attachments/637100839105855520/1077667442664415383/steam.png?width=64&height=64'},
+    cpu: {name: 'Results via TechPowerUp', url: 'https://www.techpowerup.com/cpu-specs/', iconURL: 'https://media.discordapp.net/attachments/637100839105855520/1077994564801015848/image.png?width=64&height=64'},
+    gpu: {name: 'Results via TechPowerUp', url: 'https://www.techpowerup.com/gpu-specs/', iconURL: 'https://media.discordapp.net/attachments/637100839105855520/1077994564801015848/image.png?width=64&height=64'},
+}
+
 module.exports = {
     data: new SlashCommandBuilder()
     .setName('search')
@@ -50,6 +56,7 @@ module.exports = {
                     .setURL(`https://store.steampowered.com/search/?term=${query.replaceAll(' ', '+')}`)
                     .setThumbnail(await getSteamThumbnailURL(query))
                     .setColor('#FFFFFF')
+                    .setAuthor(AUTHORS.steam)
                     .addFields(embedFields);
 
                 interaction.reply({embeds: [steamEmbed]});
