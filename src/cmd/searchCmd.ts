@@ -33,20 +33,28 @@ module.exports = {
         const parameters = getMessageParameters(interaction);
         const query: string = parameters['query'];
         let results: (SteamGame | Hardware)[];
+        const embedFields: { name: string, value: string, inline?: boolean }[] = [];
 
         // TODO refine
         switch (parameters['type']) {
             case 'CPU':
                 results = await searchHardware('CPU', query);
+                results.forEach( (i: Hardware) => {
+                    embedFields.push({name: i.name, value: JSON.stringify(i)});
+                });
+
                 interaction.reply(JSON.stringify(results));
                 break;
             case 'GPU':
                 results = await searchHardware('GPU', query);
+                results.forEach( (i: Hardware) => {
+                    embedFields.push({name: i.name, value: JSON.stringify(i)});
+                });
+
                 interaction.reply(JSON.stringify(results));
                 break;
             case 'Steam':
                 results = await searchSteamApps(query);
-                const embedFields: { name: string, value: string, inline?: boolean }[] = [];
                 results.forEach( (i: SteamGame) => {
                     embedFields.push({name: `(${i.name})[${i.getLink()}]`, value: ' '});
                 });
