@@ -66,8 +66,8 @@ export interface SpecsComparison {
 }
 
 export interface Hardware {
-    readonly name: String;
-    readonly brand: String; // stuff like NVidia, Intel, AMD, etc
+    readonly name: string;
+    readonly brand: string; // stuff like NVidia, Intel, AMD, etc
     readonly type: "CPU" | "GPU";
     readonly fields: {
         CPU?: {
