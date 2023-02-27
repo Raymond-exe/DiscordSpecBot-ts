@@ -1,9 +1,9 @@
 import { Hardware, Specifications } from "../hardware/hardware";
 
 export interface GameDetails {
-    readonly name: String;
-    readonly market: String;
-    readonly link: String;
+    readonly name: string;
+    readonly market: string;
+    readonly link: string;
     readonly container?: any;
 
     requirements: {

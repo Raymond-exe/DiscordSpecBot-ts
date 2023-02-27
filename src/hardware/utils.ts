@@ -16,7 +16,7 @@ export function compare(h1: Hardware, h2: Hardware): number {
 }
 
 export class Parse {
-    public static async cpu(raw: String): Promise<Hardware> {
+    public static async cpu(raw: string): Promise<Hardware> {
         const result = (await searchHardware('CPU', raw)[0]);
         return new Promise(resolve => {
             console.log(`Result: ${result}`);
@@ -25,7 +25,7 @@ export class Parse {
         })
     }
 
-    public static async gpu(raw: String): Promise<Hardware> {
+    public static async gpu(raw: string): Promise<Hardware> {
         const result = (await searchHardware('GPU', raw)[0]);
         return new Promise(resolve => {
             console.log(`Result: ${result}`);
@@ -33,12 +33,12 @@ export class Parse {
         });
     }
 
-    public static ram(raw: String): number {
+    public static ram(raw: string): number {
         const ram = Number(raw.replaceAll(/\D+/g, ''));
         return ram ? (raw.toLowerCase().includes('mb') ? ram / 1000.0 : ram) : 0;
     }
 
-    public static directx(raw: String | false): 9 | 10 | 11 | 12 | false {
+    public static directx(raw: string | false): 9 | 10 | 11 | 12 | false {
         if (!raw) return false;
         const dx = Number(raw.replaceAll(/\D+/g, ''));
         return dx === 9 || dx === 10 || dx === 11 || dx === 12 ? dx : false;
@@ -49,7 +49,7 @@ function isEmpty(specs: Specifications): boolean {
     return !specs.CPU && !specs.GPU && !specs.RAM && !specs.OS && !specs.directX;
 }
 
-export async function searchHardware(type: 'CPU' | 'GPU', query: String, querySize: number = 10): Promise<Hardware[]> {
+export async function searchHardware(type: 'CPU' | 'GPU', query: string, querySize: number = 10): Promise<Hardware[]> {
     const url = SEARCH_URL[type];
     query = query.replaceAll(' ', '%20');
 
@@ -112,9 +112,9 @@ export async function searchHardware(type: 'CPU' | 'GPU', query: String, querySi
 
     return hardwareOutput.reverse();
 
-    function getAllVendors(flag: string = 'vendor-'): String[] {
+    function getAllVendors(flag: string = 'vendor-'): string[] {
         let html = rawHtml;
-        let occurrences: String[] = [];
+        let occurrences: string[] = [];
         while (html.includes(flag)) {
             let index = html.indexOf(flag) + flag.length;
             let end = html.indexOf('"', index);

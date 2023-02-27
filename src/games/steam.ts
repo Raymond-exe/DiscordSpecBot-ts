@@ -10,7 +10,7 @@ const APP_URL = 'https://store.steampowered.com/app/';
 const FILTER_URL = 'https://store.steampowered.com/search/suggest?term={QUERY}&f=games&cc=US&l=english&excluded_content_descriptors%5B%5D=1&use_store_query=1&use_search_spellcheck=1';
 
 const STEAMAPPS_CACHE: SteamGame[] = [];
-const SEARCH_CACHE: Map<String, SteamGame[]> = new Map();
+const SEARCH_CACHE: Map<string, SteamGame[]> = new Map();
 const THUMBNAIL_CACHE: Map<string, string> = new Map();
 
 export class SteamGame {
@@ -40,8 +40,8 @@ export class SteamGame {
         if (deets) {
             const rawRequirements = deets['pc_requirements'];
             const requirements = {
-                minimum: new Map<String, String>(),
-                recommended: new Map<String, String>()
+                minimum: new Map<string, string>(),
+                recommended: new Map<string, string>()
             }
 
             if (rawRequirements['minimum']) {
@@ -87,7 +87,7 @@ export class SteamGame {
         }
     }
 
-    public getLink(): String {
+    public getLink(): string {
         return `${APP_URL}${this.appid}`;
     }
 
@@ -101,7 +101,7 @@ export class SteamGame {
     }
 }
 
-async function mapToSpecs(map: Map<String, String>): Promise<Specifications> {
+async function mapToSpecs(map: Map<string, string>): Promise<Specifications> {
     const cpu = getOrDefault('Processor');
     const gpu = getOrDefault('Graphics');
     const ram = getOrDefault('Memory');
@@ -122,7 +122,7 @@ async function mapToSpecs(map: Map<String, String>): Promise<Specifications> {
 
     return specs;
 
-    function getOrDefault(key: String) {
+    function getOrDefault(key: string) {
         return (map.has(key) ? map.get(key) : false)
     }
 }
@@ -178,7 +178,7 @@ async function getFilter(query: string) {
     return await (await fetch(FILTER_URL.replace('{QUERY}', query.replaceAll(' ', '+')))).text();
 }
 
-async function getJSON(URL: String) {
+async function getJSON(URL: string) {
     return await (await fetch(`${URL}`)).json();
 }
 

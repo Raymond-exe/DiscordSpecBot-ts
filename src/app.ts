@@ -45,7 +45,7 @@ client.on('interactionCreate', async interaction => {
 
 });
 
-function getCommand(name) {
+function getCommand(name: string) {
     for (const cmd of commands) {
         if (cmd.data.name === name) {
             return cmd;

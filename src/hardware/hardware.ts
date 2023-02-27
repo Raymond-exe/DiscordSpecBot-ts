@@ -6,7 +6,7 @@ import { compare } from "./utils";
 
 export class User {
     public readonly discordId: number;
-    public name: String; // maybe change this to a method to update dynamically instead of caching?
+    public name: string; // maybe change this to a method to update dynamically instead of caching?
     public specs: Specifications;
 
     constructor(discordId: number, specs: Specifications) {
@@ -52,9 +52,9 @@ export interface Specifications {
     readonly GPU: Hardware | null;
     readonly RAM: number;
     diskSpace?: number; // not entered for Users, too invasive
-    OS?: String; // same caveat as diskSpace
+    OS?: string; // same caveat as diskSpace
     directX?: 9 | 10 | 11 | 12; // who cares about 12 ultimate
-    notes?: String;
+    notes?: string;
 }
 
 export interface SpecsComparison {
@@ -62,7 +62,7 @@ export interface SpecsComparison {
     readonly GPU: number;
     readonly RAM: number;
     readonly overall: boolean;
-    notes?: String;
+    notes?: string;
 }
 
 export interface Hardware {
