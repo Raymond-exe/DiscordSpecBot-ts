@@ -40,10 +40,28 @@ module.exports = {
             case 'CPU':
                 results = await searchHardware('CPU', query);
                 results.forEach( (i: Hardware) => {
-                    embedFields.push({name: i.name, value: JSON.stringify(i)});
+                    const cpuFields = i.fields.CPU;
+                    if (!cpuFields) return;
+
+                    const details = [ `${cpuFields.cores} cores, ${cpuFields.threads} threads` ];
+                    if (cpuFields.overClock) {
+                        details.push(`Clockrate: ${cpuFields.baseClock} - ${cpuFields.overClock} GHz`);
+                    } else {
+                        details.push(`Clockrate: ${cpuFields.baseClock} GHz`);
+                    }
+
+                    embedFields.push({name: i.name, value: details.join('\n')});
                 });
 
-                interaction.reply(JSON.stringify(results));
+                const cpuEmbed = new MessageEmbed()
+                    .setTitle(`CPU Search results for *${query}*...`)
+                    .setURL('https://www.techpowerup.com/cpu-specs/')
+                    // .setThumbnail() // TODO
+                    .setColor('#FFFFFF')
+                    .setAuthor(AUTHORS.cpu)
+                    .addFields(embedFields);
+
+                interaction.reply({ embeds: [cpuEmbed] });
                 break;
             case 'GPU':
                 results = await searchHardware('GPU', query);
