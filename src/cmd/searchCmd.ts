@@ -40,14 +40,14 @@ module.exports = {
             case 'CPU':
                 results = await searchHardware('CPU', query);
                 results.forEach( (i: Hardware) => {
-                    const cpuFields = i.fields.CPU;
-                    if (!cpuFields) return;
+                    const fields = i.fields.CPU;
+                    if (!fields) return;
 
-                    const details = [ `${cpuFields.cores} cores, ${cpuFields.threads} threads` ];
-                    if (cpuFields.overClock) {
-                        details.push(`Clockrate: ${cpuFields.baseClock} - ${cpuFields.overClock} GHz`);
+                    const details = [ `${fields.cores} cores, ${fields.threads} threads` ];
+                    if (fields.overClock) {
+                        details.push(`Clockrate: ${fields.baseClock} - ${fields.overClock} GHz`);
                     } else {
-                        details.push(`Clockrate: ${cpuFields.baseClock} GHz`);
+                        details.push(`Clockrate: ${fields.baseClock} GHz`);
                     }
 
                     embedFields.push({name: i.name, value: details.join('\n')});
@@ -66,7 +66,15 @@ module.exports = {
             case 'GPU':
                 results = await searchHardware('GPU', query);
                 results.forEach( (i: Hardware) => {
-                    embedFields.push({name: i.name, value: JSON.stringify(i)});
+                    const fields = i.fields.GPU;
+                    if (!fields) return;
+
+                    const details = [];
+
+                    embedFields.push({
+                        name: (i.brand ? `**${i.brand}** ${i.name}` : i.name),
+                        value: details.join('\n')
+                    });
                 });
 
                 interaction.reply(JSON.stringify(results));
