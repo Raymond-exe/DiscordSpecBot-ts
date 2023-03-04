@@ -45,9 +45,9 @@ module.exports = {
 
                     const details = [ `${fields.cores} cores, ${fields.threads} threads` ];
                     if (fields.overClock) {
-                        details.push(`Clockrate: ${fields.baseClock} - ${fields.overClock} GHz`);
+                        details.push(`Clockrate: *${fields.baseClock} - ${fields.overClock} GHz*`);
                     } else {
-                        details.push(`Clockrate: ${fields.baseClock} GHz`);
+                        details.push(`Clockrate: *${fields.baseClock} GHz*`);
                     }
 
                     embedFields.push({name: i.name, value: details.join('\n')});
@@ -69,7 +69,11 @@ module.exports = {
                     const fields = i.fields.GPU;
                     if (!fields) return;
 
-                    const details = [];
+                    const details = [
+                        `Memory: *${fields.memory} GB*`,
+                        `GPU Clockrate: *${fields.gpuClock} MHz*`,
+                        `Memory Clockrate: *${fields.memClock} MHz*`,
+                    ];
 
                     embedFields.push({
                         name: (i.brand ? `**${i.brand}** ${i.name}` : i.name),
