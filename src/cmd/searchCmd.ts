@@ -38,7 +38,7 @@ module.exports = {
         // TODO refine
         switch (parameters['type']) {
             case 'CPU':
-                results = await searchHardware('CPU', query);
+                results = await searchHardware('CPU', query, 5);
                 results.forEach( (i: Hardware) => {
                     const fields = i.fields.CPU;
                     if (!fields) return;
@@ -64,7 +64,7 @@ module.exports = {
                 interaction.reply({ embeds: [cpuEmbed] });
                 break;
             case 'GPU':
-                results = await searchHardware('GPU', query);
+                results = await searchHardware('GPU', query, 5);
                 results.forEach( (i: Hardware) => {
                     const fields = i.fields.GPU;
                     if (!fields) return;
@@ -81,7 +81,15 @@ module.exports = {
                     });
                 });
 
-                interaction.reply(JSON.stringify(results));
+                const gpuEmbed = new MessageEmbed()
+                    .setTitle(`GPU Search results for *${query}*...`)
+                    .setURL('https://www.techpowerup.com/gpu-specs/')
+                    // .setThumbnail() // TODO
+                    .setColor('#FFFFFF')
+                    .setAuthor(AUTHORS.gpu)
+                    .addFields(embedFields);
+
+                interaction.reply({ embeds: [gpuEmbed] });
                 break;
             case 'Steam':
                 results = await searchSteamApps(query);
