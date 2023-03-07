@@ -1,12 +1,12 @@
 # `@Can I Play` - *The Game Specs Bot*
 
-> This bot is a **work-in-progress** and is still in active development. It may currently be missing features planned for the future, or some features being tested may be removed without warning.
+> This bot is a **work-in-progress** and is still in active development. Features may be added, removed, or otherwise changed without warning.
 
 <br>
 
 `@Can I Play` is a Discord bot made to help users determine if their PC build can run any given game on Steam* using the various resources linked in the "External Sources" section below.
 
-##### **Other game marketplaces may be added **if requested** in the future.*
+##### **Other game marketplaces may be added **if requested** in the future. Please submit requests on the [issues](https://github.com/Raymond-exe/DiscordSpecBot-ts/issues) page.*
 
 <br>
 
