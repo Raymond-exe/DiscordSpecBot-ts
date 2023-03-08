@@ -1,6 +1,7 @@
 import { SlashCommandBuilder } from '@discordjs/builders';
 import { Message } from 'discord.js';
 import { Parse } from '../hardware/utils';
+import { getMessageParameters } from './command';
 
 module.exports = {
     data: new SlashCommandBuilder().setName('setcpu')
@@ -10,11 +11,12 @@ module.exports = {
         .setDescription('Name of your CPU')
         .setRequired(true)),
     execute: async (interaction: Message) => {
-        const name = ""; // TODO get CPU Name option
+        const parameters = getMessageParameters(interaction);
+        const name = parameters['cpu'];
         const CPU = await Parse.cpu(name);
 
         // TODO assign CPU to user's build
 
-        await interaction.reply('CPU');
+        await interaction.reply(`Set your CPU to ${CPU.name}`);
     }
 }
