@@ -61,7 +61,7 @@ export async function searchHardware(type: 'CPU' | 'GPU', query: string, querySi
     switch (type) {
         case 'CPU':
             for (let item in results) {
-                item = results[item]
+                item = results[item];
                 const cores = item['Cores'].split('/');
                 if (cores.length === 1) cores.push(cores[0]);
                 const clock = item['Clock'].split(' ');
@@ -74,7 +74,7 @@ export async function searchHardware(type: 'CPU' | 'GPU', query: string, querySi
                             cores: Number(cores[0].trim()),
                             threads: Number(cores[1].trim()),
                             baseClock: Number(clock[0].trim()),
-                            overClock: Number(clock[1].trim())
+                            overClock: Number(clock[2].trim())
                         }
                     }
                 });
