@@ -4,7 +4,7 @@ export interface GameDetails {
     readonly name: string;
     readonly market: string;
     readonly link: string;
-    readonly container?: any;
+    readonly parent?: any;
 
     requirements: {
         minimum: Specifications,

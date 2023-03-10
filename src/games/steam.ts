@@ -28,7 +28,7 @@ export class SteamGame {
             name: this.name,
             market: 'Steam',
             link: this.getLink(),
-            container: this,
+            parent: this,
 
             // TODO this below
             requirements: await this.getSpecs()
@@ -193,4 +193,4 @@ function test() {
         let game = searchSteamApps('Halo: Wars');
     });
 }
-test();
+// test();
