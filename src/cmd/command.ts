@@ -1,6 +1,7 @@
 import { SlashCommandBuilder } from '@discordjs/builders';
 import { REST } from '@discordjs/rest';
 import { Routes } from 'discord-api-types/v9';
+import { Message } from 'discord.js';
 import * as fs from 'fs';
 
 const IGNORE_INVALID_COMMANDS = true;
@@ -40,10 +41,10 @@ export async function registerCommands(cmds: DiscordCommand[], botInfo: { TOKEN:
         { body: commandJsons },
     );
 
-    console.log(`Registered ${cmds.length} commands via Discord REST API.`)
+    console.log(`Registered ${cmds.length} commands via Discord REST API.`);
 }
 
-export function getMessageParameters(interaction) {
+export function getMessageParameters(interaction: Message) {
     const parameters = {};
     for (const option of interaction['options']['_hoistedOptions']) {
         parameters[option.name] = option.value;
