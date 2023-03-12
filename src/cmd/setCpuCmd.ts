@@ -16,7 +16,12 @@ module.exports = {
         const CPU = await Parse.cpu(name);
 
         // TODO assign CPU to user's build
+        const success = false;
 
-        await interaction.reply(`Set your CPU to ${CPU.name}`);
+        await interaction.reply(success ? `Set your CPU to ${CPU.name}` : `Failed to set your CPU as ${CPU.name}, please try again shortly!`);
+
+        if (!success) {
+            // TODO error logging
+        }
     }
 }
