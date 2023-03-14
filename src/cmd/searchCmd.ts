@@ -5,6 +5,7 @@ import { searchHardware } from '../hardware/utils';
 import { getMessageParameters } from './command';
 import { Hardware } from '../hardware/hardware';
 
+// TODO pagination
 const QUERY_COUNT = 25;
 const RESULTS_PER_PAGE = 5;
 
@@ -13,6 +14,10 @@ const AUTHORS = {
     cpu: {name: 'Results via TechPowerUp', url: 'https://www.techpowerup.com/cpu-specs/', iconURL: 'https://media.discordapp.net/attachments/637100839105855520/1077994564801015848/image.png?width=64&height=64'},
     gpu: {name: 'Results via TechPowerUp', url: 'https://www.techpowerup.com/gpu-specs/', iconURL: 'https://media.discordapp.net/attachments/637100839105855520/1077994564801015848/image.png?width=64&height=64'},
 }
+
+const CONFUSED_IMGS = [
+    'https://media.discordapp.net/attachments/637100839105855520/1083466098680275064/querynotfound.gif',
+];
 
 module.exports = {
     data: new SlashCommandBuilder()
@@ -39,6 +44,12 @@ module.exports = {
         switch (parameters['type']) {
             case 'CPU':
                 results = await searchHardware('CPU', query, 5);
+
+                if (results.length === 0) {
+                    interaction.reply({ embeds: [getNoResultsEmbed(query, 'CPU', AUTHORS.cpu.url)] });
+                    break;
+                }
+
                 results.forEach( (i: Hardware) => {
                     const fields = i.fields.CPU;
                     if (!fields) return;
@@ -65,6 +76,12 @@ module.exports = {
                 break;
             case 'GPU':
                 results = await searchHardware('GPU', query, 5);
+
+                if (results.length === 0) {
+                    interaction.reply({ embeds: [getNoResultsEmbed(query, 'GPU', AUTHORS.gpu.url)] });
+                    break;
+                }
+
                 results.forEach( (i: Hardware) => {
                     const fields = i.fields.GPU;
                     if (!fields) return;
@@ -93,6 +110,12 @@ module.exports = {
                 break;
             case 'Steam':
                 results = await searchSteamApps(query);
+
+                if (results.length === 0) {
+                    interaction.reply({ embeds: [getNoResultsEmbed(query, 'game', AUTHORS.steam.url)] });
+                    break;
+                }
+
                 results.forEach( (i: SteamGame) => {
                     embedFields.push({name: `(${i.name})[${i.getLink()}]`, value: ' '});
                 });
@@ -108,5 +131,19 @@ module.exports = {
                 interaction.reply({embeds: [steamEmbed]});
                 break;
         }
+    }
+}
+
+export function getNoResultsEmbed(query: string, type: string, url: string = ''): MessageEmbed {
+    const embed: MessageEmbed = new MessageEmbed()
+        .setTitle(`No ${type}s found under \`${query}\`!`)
+        .setDescription(`*Try searching for your ${type} [here](${url}).*`)
+        .setThumbnail(`${random(CONFUSED_IMGS)}?width=64&height=64`)
+        .setColor('#FF0000');
+
+    return embed;
+
+    function random(array: any[]) {
+        return array[Math.floor(Math.random()*array.length)];
     }
 }
