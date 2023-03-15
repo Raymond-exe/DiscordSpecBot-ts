@@ -6,8 +6,8 @@ dotenv.config();
 
 
 
-// create client
-const client = new Client({
+// create & export client
+export const client = new Client({
     intents: [
         Intents.FLAGS.GUILDS,
         Intents.FLAGS.GUILD_MESSAGES,

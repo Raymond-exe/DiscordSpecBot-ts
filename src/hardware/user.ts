@@ -1,11 +1,11 @@
+import { client } from "../app";
 import { GameDetails } from "../games/gamedetails";
 import { Specifications, SpecsComparison } from "./hardware";
 import { compare } from "./utils";
-import { Firestore } from "@google-cloud/firestore";
+import { database } from "../firebase";
 
 export class User {
     public readonly discordId: number;
-    public name: string; // maybe change this to a method to update dynamically instead of caching?
     public specs: Specifications;
 
     constructor(discordId: number, specs: Specifications) {
@@ -42,6 +42,31 @@ export class User {
             return min;
         }
     }
-}
 
-// TODO firestore logic
+    public getName(): string {
+        const cache = client.users.cache;
+        if (cache.has(this.discordId.toString())) {
+            return cache.get(this.discordId.toString()).username;
+        } else {
+            throw new Error (`User not found / not cached: <@!${this.discordId}>`);
+        }
+    }
+
+    public update(): boolean {
+        // TODO function to update firestore
+        // return true if successful
+        return false;
+    }
+
+    public static getById(id: number): User {
+        const users = database.collection("userSpecs");
+        const doc = users.doc(id.toString()).get();
+
+        if (!doc) {
+            throw new Error(`User not in database: <@!${id}>`);
+        }
+
+        // TODO fix
+        return null;
+    }
+}
