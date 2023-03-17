@@ -16,7 +16,11 @@ const AUTHORS = {
 }
 
 const CONFUSED_IMGS = [
-    'https://media.discordapp.net/attachments/637100839105855520/1083466098680275064/querynotfound.gif',
+    'https://media.discordapp.net/attachments/637100839105855520/1083466098680275064/querynotfound.gif', // le fishe
+    'https://media.discordapp.net/attachments/754248166345408573/1083495879866056704/querynotfound.gif', // bluey
+    'https://media.discordapp.net/attachments/917986986155966495/1083508939288739911/querySTILLnotfound.gif', // Vincent
+    'https://media.discordapp.net/attachments/1067564328590524517/1083596856791138304/wah.gif', // wah
+    'https://media.discordapp.net/attachments/1067564328590524517/1083497269447372800/QuerulousInconsequentialKissingbug-size_restricted.gif', // EMPTY
 ];
 
 module.exports = {
