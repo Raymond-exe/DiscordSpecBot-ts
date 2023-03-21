@@ -67,7 +67,6 @@ export async function searchHardware(type: 'CPU' | 'GPU', query: string, querySi
                 const clock = item['Clock'].split(' ');
                 hardwareOutput.push({
                     name: item['Name'],
-                    brand: null,
                     type: 'CPU',
                     fields: {
                         CPU: {
@@ -90,8 +89,7 @@ export async function searchHardware(type: 'CPU' | 'GPU', query: string, querySi
             for (let item in results) {
                 item = results[item];
                 hardwareOutput.push({
-                    name: item['Product Name'],
-                    brand: vendors.shift(),
+                    name: `${vendors.shift()} ${item['Product Name']}`,
                     type: 'GPU',
                     fields: {
                         GPU: {

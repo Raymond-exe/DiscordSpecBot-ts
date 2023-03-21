@@ -97,7 +97,7 @@ module.exports = {
                     ];
 
                     embedFields.push({
-                        name: (i.brand ? `**${i.brand}** ${i.name}` : i.name),
+                        name: i.name,
                         value: details.join('\n')
                     });
                 });
