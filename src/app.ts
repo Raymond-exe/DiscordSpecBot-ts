@@ -1,10 +1,9 @@
 import { Client, Intents, Message } from 'discord.js';
 import { DiscordCommand, loadCommands, registerCommands } from './cmd/command';
 import dotenv from 'dotenv';
+import { userCollection } from './firebase';
 
 dotenv.config();
-
-
 
 // create & export client
 export const client = new Client({
@@ -24,6 +23,10 @@ client.on('ready', () => console.log('\n-----------------\n| Bot is ready. |\n--
 // load & register commands
 const commands: DiscordCommand[] = loadCommands();
 registerCommands(commands, { TOKEN: process.env.DISCORD_TOKEN, CLIENT_ID: process.env.DISCORD_CLIENT_ID });
+
+
+// check connection to firebase servers
+console.log(`Loaded users: ${userCollection()}`);
 
 
 // interaction (command) handler
