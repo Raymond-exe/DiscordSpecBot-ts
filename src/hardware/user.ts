@@ -1,8 +1,8 @@
 import { client } from "../app";
+import { DOC_KEYS as KEYS, userCollection } from "../firebase";
 import { GameDetails } from "../games/gamedetails";
 import { Specifications, SpecsComparison } from "./hardware";
 import { compare } from "./utils";
-import { database } from "../firebase";
 
 export class User {
     public readonly discordId: number;
@@ -11,6 +11,7 @@ export class User {
     constructor(discordId: number, specs: Specifications) {
         this.discordId = discordId;
         this.specs = specs;
+        this.specs.parent = this;
     }
 
     public isBetterThan(other: Specifications): SpecsComparison {
@@ -53,20 +54,52 @@ export class User {
     }
 
     public update(): boolean {
+        const document = userCollection().doc(this.discordId.toString());
         // TODO function to update firestore
         // return true if successful
         return false;
     }
 
-    public static getById(id: number): User {
-        const users = database.collection("userSpecs");
-        const doc = users.doc(id.toString()).get();
+    public static async getUser(userId: number): Promise<User> {
+        const document = await userCollection().doc(userId.toString()).get();
 
-        if (!doc) {
-            throw new Error(`User not in database: <@!${id}>`);
+        if (!document) {
+            return null;
         }
 
-        // TODO fix
-        return null;
+        const foundUser = new User(userId, {
+            CPU: {
+                name: get(KEYS.CPU.NAME),
+                type: 'CPU',
+                fields: {
+                    CPU: {
+                        cores: get(KEYS.CPU.CORES),
+                        threads: get(KEYS.CPU.THREADS),
+                        baseClock: get(KEYS.CPU.BASE_CLOCK),
+                        overClock: get(KEYS.CPU.OVERCLOCK),
+                    }
+                }
+
+            },
+            GPU: {
+                name: get(KEYS.GPU.NAME),
+                type: 'GPU',
+                fields: {
+                    GPU: {
+                        memory: get(KEYS.GPU.MEMORY),
+                        memClock: get(KEYS.GPU.MEMORY_CLOCK),
+                        gpuClock: get(KEYS.GPU.GPU_CLOCK),
+                    }
+                }
+            },
+            RAM: get(KEYS.RAM),
+            notes: get(KEYS.NOTES),
+        });
+
+        return foundUser;
+
+        function get(key: string) {
+            return document.get(key);
+        }
     }
 }

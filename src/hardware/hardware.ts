@@ -3,7 +3,7 @@ import { User } from "./user";
 
 // RAM & diskSpace are expressed in gigabytes
 export interface Specifications {
-    readonly parent?: GameDetails | User;
+    parent?: GameDetails | User;
     readonly CPU: Hardware | null;
     readonly GPU: Hardware | null;
     readonly RAM: number;
@@ -23,7 +23,6 @@ export interface SpecsComparison {
 
 export interface Hardware {
     readonly name: string;
-    readonly brand: string; // stuff like NVidia, Intel, AMD, etc
     readonly type: "CPU" | "GPU";
     readonly fields: {
         CPU?: {
