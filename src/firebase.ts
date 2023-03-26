@@ -33,7 +33,8 @@ const firebaseConfig = {
 }
 
 const app = initializeApp(firebaseConfig);
-const database: Firestore = getFirestore();
+const database: Firestore = getFirestore(app);
+console.log(`Successfully connected to Firebase | ${app.name}`);
 
 export function userCollection(): CollectionReference {
     return database.collection('userSpecs');
