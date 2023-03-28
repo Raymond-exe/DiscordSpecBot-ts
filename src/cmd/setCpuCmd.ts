@@ -1,6 +1,7 @@
 import { SlashCommandBuilder } from '@discordjs/builders';
 import { Message } from 'discord.js';
-import { Parse } from '../hardware/utils';
+import { User } from '../hardware/user';
+import { getAuthor, Parse } from '../hardware/utils';
 import { getMessageParameters } from './command';
 
 module.exports = {
@@ -14,9 +15,14 @@ module.exports = {
         const parameters = getMessageParameters(interaction);
         const name = parameters['cpu'];
         const CPU = await Parse.cpu(name);
+        const author = getAuthor(interaction);
 
-        // TODO assign CPU to user's build
+        console.log(author);
+
         const success = false;
+
+        const userSpecs = User.getUser(Number(author.id));
+        console.log(userSpecs);
 
         await interaction.reply(success ? `Set your CPU to ${CPU.name}` : `Failed to set your CPU as ${CPU.name}, please try again shortly!`);
 

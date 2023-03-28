@@ -95,6 +95,7 @@ export class User {
             RAM: get(KEYS.RAM),
             notes: get(KEYS.NOTES),
         });
+        foundUser.specs.parent = foundUser;
 
         return foundUser;
 

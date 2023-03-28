@@ -19,19 +19,12 @@ export function compare(h1: Hardware, h2: Hardware): number {
 export class Parse {
     public static async cpu(raw: string): Promise<Hardware> {
         const result = (await searchHardware('CPU', raw)[0]);
-        return new Promise(resolve => {
-            console.log(`Result: ${result}`);
-            while (!result) {}
-            resolve(result);
-        })
+        return result;
     }
 
     public static async gpu(raw: string): Promise<Hardware> {
         const result = (await searchHardware('GPU', raw)[0]);
-        return new Promise(resolve => {
-            console.log(`Result: ${result}`);
-            resolve(result);
-        });
+        return result;
     }
 
     public static ram(raw: string): number {
@@ -74,7 +67,7 @@ export async function searchHardware(type: 'CPU' | 'GPU', query: string, querySi
                             cores: Number(cores[0].trim()),
                             threads: Number(cores[1].trim()),
                             baseClock: Number(clock[0].trim()),
-                            overClock: Number(clock[2].trim())
+                            overClock: clock[2] ? Number(clock[2].trim()) : 0,
                         }
                     }
                 });
