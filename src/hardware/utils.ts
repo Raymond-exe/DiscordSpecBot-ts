@@ -1,6 +1,7 @@
-import { Hardware, getHardwareScore, Specifications } from "./hardware";
+import { Hardware, getHardwareScore, Specifications } from './hardware';
 import fetch from 'node-fetch';
 import HtmlTableToJson from 'html-table-to-json';
+import { Message, User } from 'discord.js';
 
 const SEARCH_URL = {
     GPU: 'https://www.techpowerup.com/gpu-specs/?ajaxsrch=',
@@ -121,4 +122,13 @@ export async function searchHardware(type: 'CPU' | 'GPU', query: string, querySi
         }
         return occurrences;
     }
+}
+
+export function getAuthor(message: Message): User {
+    if (message.author)
+        return message.author;
+    else if (message['user'])
+        return message['user'];
+    else
+        throw new Error(`No author was found in message: ${Object.keys(message)}`);
 }
