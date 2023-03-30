@@ -26,7 +26,7 @@ registerCommands(commands, { TOKEN: process.env.DISCORD_TOKEN, CLIENT_ID: proces
 
 
 // check connection to firebase servers
-console.log(`Loaded users: ${userCollection()}`);
+console.log(`Loaded users: ${JSON.stringify(userCollection())}`);
 
 
 // interaction (command) handler
@@ -60,7 +60,7 @@ function getCommand(name: string) {
 
 // message handler, checks if user messages start with a ping for this bot
 client.on('messageCreate', (message: Message) => {
-    if (message.content.split(' ')[0].startsWith(client.user.discriminator)) {
+    if (message.content.split(' ')[0] === `<@!${client.user.id}>`) {
         // TODO do the cool thing!
     }
 });
